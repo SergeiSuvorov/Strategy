@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Core
 {
    
-    public class MainBuilding : CommandExecutorBase<IProduceUnitCommand>, ISelectable
+    public class MainBuilding : CommandExecutorBase<IProduceUnitCommand>, ISelectable, IAttackable
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;

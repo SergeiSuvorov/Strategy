@@ -4,7 +4,7 @@ using Abstractions.Commands;
 
 namespace Core
 {
-    public class MoveCommand : CommandExecutorBase<IMoveCommand>
+    public class MoveCommandExecutor : CommandExecutorBase<IMoveCommand>
     {
         [SerializeField] private float _speed;
         public float Speed => _speed;

@@ -4,7 +4,7 @@ using Abstractions.Commands;
 
 namespace Core
 {
-    public class AttackCommand: CommandExecutorBase<IAttackCommand>
+    public class AttackCommandExecutor: CommandExecutorBase<IAttackCommand>
     {
         [SerializeField] private float _damage;
         public float Damage => _damage;

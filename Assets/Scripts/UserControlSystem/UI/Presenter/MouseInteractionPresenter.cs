@@ -8,29 +8,55 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
     [SerializeField] private SelectableValue _selectedObject;
+    [SerializeField] private AttackableValue _attackObject;
     [SerializeField] private EventSystem _eventSystem;
+    
+    [SerializeField] private Vector3Value _groundClicksRMB;
+    [SerializeField] private Transform _groundTransform;
+    
+    private Plane _groundPlane;
+    
+    private void Start() => _groundPlane = new Plane(_groundTransform.up, 0);
 
     private void Update()
     {
-        if (!Input.GetMouseButtonUp(0))
+        if (!Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1))
         {
             return;
         }
-
         if (_eventSystem.IsPointerOverGameObject())
         {
             return;
         }
 
-        _selectedObject.SetValue(null);
-        var hits = Physics.RaycastAll(_camera.ScreenPointToRay(Input.mousePosition));
+        var ray = _camera.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics.RaycastAll(ray);
         if (hits.Length == 0)
         {
             return;
         }
-        var selectable = hits
+        var clickObject = hits
             .Select(hit => hit.collider.GetComponentInParent<ISelectable>())
-            .FirstOrDefault(c => c != null);
-        _selectedObject.SetValue(selectable);
+            .Where(c => c != null)
+            .FirstOrDefault();
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            _selectedObject.SetValue(clickObject);
+        }
+        else
+        {
+            var attackObject = clickObject as IAttackable;
+            if (attackObject !=null)
+            {
+                Debug.Log("Attack");
+                _attackObject.SetValue(attackObject);
+            }
+            else if (_groundPlane.Raycast(ray, out var enter))
+            {
+                _groundClicksRMB.SetValue(ray.origin + ray.direction * enter);
+            }
+        }
+
     }
 }
