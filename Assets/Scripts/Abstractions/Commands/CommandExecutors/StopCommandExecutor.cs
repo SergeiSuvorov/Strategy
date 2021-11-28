@@ -4,7 +4,7 @@ using Abstractions.Commands;
 
 namespace Core
 {
-    public class StopCommand : CommandExecutorBase<IStopCommand>
+    public class StopCommandExecutor : CommandExecutorBase<IStopCommand>
     {
         public override void ExecuteSpecificCommand(IStopCommand command)
         {

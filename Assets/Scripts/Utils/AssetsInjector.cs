@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using UnityEngine;
 
 namespace Utils
 {
@@ -11,11 +10,9 @@ namespace Utils
         public static T Inject<T>(this AssetsContext context, T target)
         {
             var targetType = target.GetType();
-            while (targetType.BaseType!= null)
+            while (targetType != null)
             {
-                var allFields = targetType.GetFields(BindingFlags.NonPublic
-                                                    | BindingFlags.Public
-                                                    | BindingFlags.Instance);
+                var allFields = targetType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
                 for (int i = 0; i < allFields.Length; i++)
                 {
@@ -30,9 +27,8 @@ namespace Utils
                 }
 
                 targetType = targetType.BaseType;
-                Debug.Log(targetType.Name);
             }
-           
+
             return target;
         }
     }

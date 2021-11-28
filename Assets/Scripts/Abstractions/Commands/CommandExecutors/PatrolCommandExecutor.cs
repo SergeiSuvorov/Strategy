@@ -4,7 +4,7 @@ using Abstractions.Commands;
 
 namespace Core
 {
-    public class PatrolCommand : CommandExecutorBase<IPatrolCommand>
+    public class PatrolCommandExecutor : CommandExecutorBase<IPatrolCommand>
     {
         public override void ExecuteSpecificCommand(IPatrolCommand command)
         {

@@ -1,5 +1,4 @@
-﻿using Tools;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Abstractions
 {
@@ -8,7 +7,7 @@ namespace Abstractions
         float Health { get; }
         float MaxHealth { get; }
         Sprite Icon { get; }
-       
+
         void OnSelected();
         void OnDeselected();
     }
