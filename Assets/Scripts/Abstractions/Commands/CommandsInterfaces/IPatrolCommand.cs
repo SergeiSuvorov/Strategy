@@ -4,6 +4,7 @@ namespace Abstractions.Commands.CommandsInterfaces
 {
     public interface IPatrolCommand : ICommand
     {
-        Vector3 PatrolPoint { get; }
+        Vector3 From { get; }
+        Vector3 To { get; }
     }
 }

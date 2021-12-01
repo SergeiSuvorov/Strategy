@@ -1,12 +1,17 @@
 ﻿using Abstractions.Commands.CommandsInterfaces;
 using UnityEngine;
 
-public class PatrolCommand : IPatrolCommand
+namespace UserControlSystem.CommandsRealization
 {
-    private readonly Vector3 _patrolPoint;
-    public Vector3 PatrolPoint => _patrolPoint;
-    public PatrolCommand (Vector3 patrolPoint)
+    public sealed class PatrolCommand : IPatrolCommand
     {
-        _patrolPoint = patrolPoint;
+        public Vector3 From { get; }
+        public Vector3 To { get; }
+
+        public PatrolCommand(Vector3 from, Vector3 to)
+        {
+            From = from;
+            To = to;
+        }
     }
 }

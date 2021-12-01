@@ -3,15 +3,16 @@ using Abstractions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UserControlSystem;
+using Zenject;
 
 public sealed class MouseInteractionPresenter : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
-    [SerializeField] private SelectableValue _selectedObject;
-    [SerializeField] private AttackableValue _attackObject;
+    [Inject] private SelectableValue _selectedObject;
+    [Inject] private AttackableValue _attackObject;
     [SerializeField] private EventSystem _eventSystem;
-    
-    [SerializeField] private Vector3Value _groundClicksRMB;
+
+    [Inject] private Vector3Value _groundClicksRMB;
     [SerializeField] private Transform _groundTransform;
     
     private Plane _groundPlane;
@@ -28,6 +29,7 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
         {
             return;
         }
+
 
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray);

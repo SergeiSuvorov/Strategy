@@ -1,6 +1,6 @@
-using Tools;
-using UnityEngine;
 
+using UnityEngine;
+using Tools;
 
 public sealed class OutlineSelector : MonoBehaviour
 {

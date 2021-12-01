@@ -7,7 +7,7 @@ namespace Abstractions
         float Health { get; }
         float MaxHealth { get; }
         Sprite Icon { get; }
-
+        Transform PivotPoint { get; }
         void OnSelected();
         void OnDeselected();
     }
