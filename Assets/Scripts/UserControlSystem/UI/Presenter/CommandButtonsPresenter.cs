@@ -25,7 +25,7 @@ namespace UserControlSystem.UI.Presenter
             _model.OnCommandCancel += _view.UnblockAllInteractions;
             _model.OnCommandAccepted += _view.BlockInteractions;
 
-            _selectable.OnValueChange += ONSelected;
+            _selectable.OnNewValue += ONSelected;
             ONSelected(_selectable.CurrentValue);
         }
 
@@ -35,10 +35,6 @@ namespace UserControlSystem.UI.Presenter
             {
                 return;
             }
-            if (_currentSelectable != null)
-            {
-                _model.OnSelectionChanged();
-            }
             _currentSelectable = selectable;
 
             _view.Clear();
@@ -47,6 +43,7 @@ namespace UserControlSystem.UI.Presenter
                 var commandExecutors = new List<ICommandExecutor>();
                 commandExecutors.AddRange((selectable as Component).GetComponentsInParent<ICommandExecutor>());
                 _view.MakeLayout(commandExecutors);
+                _model.OnSelectionChanged(commandExecutors);
             }
         }
     }

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Abstractions.Commands;
 using Abstractions.Commands.CommandsInterfaces;
+using UnityEngine;
+using UserControlSystem.CommandsRealization;
 using Zenject;
 
 namespace UserControlSystem
@@ -12,12 +15,15 @@ namespace UserControlSystem
         public event Action OnCommandCancel;
 
         [Inject] private CommandCreatorBase<IProduceUnitCommand> _unitProducer;
-        [Inject] private CommandCreatorBase<IMoveCommand> _mover;
+        [Inject] private CancellableCommandCreatorBase<IMoveCommand, Vector3> _mover;
         [Inject] private CommandCreatorBase<IAttackCommand> _attacker;
         [Inject] private CommandCreatorBase<IPatrolCommand> _patroller;
+        [Inject] private CommandCreatorBase<IStopCommand> _stoper;
+
+        private CommandExecutorBase<IMoveCommand> _moverExecutor;
 
         private bool _commandIsPending;
-
+        [Inject] private Vector3Value _groundClicksRMB;
         public void OnCommandButtonClicked(ICommandExecutor commandExecutor)
         {
             if (_commandIsPending)
@@ -31,6 +37,7 @@ namespace UserControlSystem
             _mover.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
             _attacker.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
             _patroller.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
+            _stoper.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
         }
 
         public void ExecuteCommandWrapper(ICommandExecutor commandExecutor, object command)
@@ -40,10 +47,27 @@ namespace UserControlSystem
             OnCommandSent?.Invoke();
         }
 
-        public void OnSelectionChanged()
+        private void OnGroundClicksRMB(Vector3 argument)
         {
+            _moverExecutor.ExecuteCommand(new MoveCommand(argument));
+        }
+
+        public void OnSelectionChanged(IEnumerable<ICommandExecutor> commandExecutors)
+        {
+            _moverExecutor = null;
+            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             _commandIsPending = false;
             processOnCancel();
+
+            foreach (var currentExecutor in commandExecutors)
+            {
+                var moveCommand = currentExecutor as CommandExecutorBase<IMoveCommand>;
+                if (moveCommand != null)
+                {
+                    _moverExecutor = moveCommand;
+                    _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
+                }
+            }
         }
 
         private void processOnCancel()

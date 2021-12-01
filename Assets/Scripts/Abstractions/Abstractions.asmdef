@@ -1,7 +1,8 @@
 {
     "name": "Abstractions",
     "references": [
-        "GUID:6dbbe0a680599e049bf583a66ea4330f"
+        "GUID:6dbbe0a680599e049bf583a66ea4330f",
+        "GUID:29f1c49583a08bc44a23b42d7c43c18e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -5,6 +5,7 @@ using Abstractions.Commands;
 using Abstractions.Commands.CommandsInterfaces;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace UserControlSystem.UI.View
 {
@@ -20,6 +21,7 @@ namespace UserControlSystem.UI.View
 
         private Dictionary<Type, GameObject> _buttonsByExecutorType;
 
+        [Inject] private Vector3Value _groundClicksRMB;
         private void Start()
         {
             _buttonsByExecutorType = new Dictionary<Type, GameObject>();
@@ -60,6 +62,12 @@ namespace UserControlSystem.UI.View
                 buttonGameObject.SetActive(true);
                 var button = buttonGameObject.GetComponent<Button>();
                 button.onClick.AddListener(() => OnClick?.Invoke(currentExecutor));
+
+                //var moveCommand = currentExecutor as CommandExecutorBase<IMoveCommand>;
+                //if (moveCommand!=null)
+                //{
+
+                //}
             }
         }
 
