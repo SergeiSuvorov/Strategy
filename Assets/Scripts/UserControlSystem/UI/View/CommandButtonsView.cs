@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Abstractions.Commands;
 using Abstractions.Commands.CommandsInterfaces;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -61,13 +62,7 @@ namespace UserControlSystem.UI.View
                 var buttonGameObject = GETButtonGameObjectByType(currentExecutor.GetType());
                 buttonGameObject.SetActive(true);
                 var button = buttonGameObject.GetComponent<Button>();
-                button.onClick.AddListener(() => OnClick?.Invoke(currentExecutor));
-
-                //var moveCommand = currentExecutor as CommandExecutorBase<IMoveCommand>;
-                //if (moveCommand!=null)
-                //{
-
-                //}
+                button.OnClickAsObservable().Subscribe(_ => OnClick?.Invoke(currentExecutor));
             }
         }
 

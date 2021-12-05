@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using Abstractions;
 using Abstractions.Commands.CommandsInterfaces;
 using UnityEngine;
 using Utils;
@@ -11,7 +13,8 @@ namespace UserControlSystem
         [SerializeField] private AssetsContext _legacyContext;
         [SerializeField] private Vector3Value _vector3Value;
         [SerializeField] private AttackableValue _attackableValue;
-       public override void InstallBindings()
+        [SerializeField] private SelectableValue _selectableValue;
+      public override void InstallBindings()
         {           
             Container.Bind<CommandCreatorBase<IProduceUnitCommand>>()
                 .To<ProduceUnitCommandCommandCreator>().AsTransient();
@@ -23,8 +26,12 @@ namespace UserControlSystem
               .To<PatrolCommandCommandCreator>().AsTransient();
             Container.Bind<CommandCreatorBase<IStopCommand>>()
              .To<StopCommandCommandCreator>().AsTransient();
+           
+
 
             Container.Bind<CommandButtonsModel>().AsTransient();
+
+            Container.Bind<IObservable<ISelectable>>().FromInstance(_selectableValue);
         }
     }
 }
