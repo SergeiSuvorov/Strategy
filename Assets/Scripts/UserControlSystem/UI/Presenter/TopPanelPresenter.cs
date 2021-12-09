@@ -23,14 +23,9 @@ public sealed class TopPanelPresenter : MonoBehaviour
 
         _menuButton.OnClickAsObservable().Subscribe(_ => _menuGo.SetActive(true));
 
-        var menuCondition = Observable.EveryUpdate().Select(isMinuOpen => _menuGo.active);
-        menuCondition.Subscribe(isMinuOpen =>
+        _menuGo.ObserveEveryValueChanged(t => t.activeSelf).Subscribe(isMinuOpen =>
         {
-            if(timeModel.IsPaused!= isMinuOpen)
-            {
-                timeModel.IsPaused = isMinuOpen;
-                Time.timeScale = Convert.ToInt32(!isMinuOpen);
-            }
+            Time.timeScale = Convert.ToInt32(!isMinuOpen);
         });
 
     }

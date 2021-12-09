@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 namespace Core
 {
    
-    public class MainBuilding : CommandExecutorBase<IProduceUnitCommand>, ISelectable, IAttackable
+    public class MainBuilding : MonoBehaviour, ISelectable, IAttackable
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
         public Sprite Icon => _icon;
+        public Vector3 RendezvousPoint { get; set; }
 
         public Transform PivotPoint => _pivotPoint;
 
@@ -36,18 +37,18 @@ namespace Core
             _selectedOutline.enabled = false;
         }
 
-        public override async void ExecuteSpecificCommand(IProduceUnitCommand command)
-        {
-            _creationQueue.Add(command);
-            if (_creationQueue.Count > 1)
-                return;
-            while (_creationQueue.Count > 0)
-            {
-                await Task.Delay(createPrefabDelayTime);
-                Instantiate(_creationQueue[0].UnitPrefab, new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)), Quaternion.identity, _unitsParent);
-                _creationQueue.Remove(_creationQueue[0]);
-                Debug.Log("Осталось произвести - " + _creationQueue.Count);
-            }
-        }
+        //public override async void ExecuteSpecificCommand(IProduceUnitCommand command)
+        //{
+        //    _creationQueue.Add(command);
+        //    if (_creationQueue.Count > 1)
+        //        return;
+        //    while (_creationQueue.Count > 0)
+        //    {
+        //        await Task.Delay(createPrefabDelayTime);
+        //        Instantiate(_creationQueue[0].UnitPrefab, new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)), Quaternion.identity, _unitsParent);
+        //        _creationQueue.Remove(_creationQueue[0]);
+        //        Debug.Log("Осталось произвести - " + _creationQueue.Count);
+        //    }
+        //}
     }
 }
