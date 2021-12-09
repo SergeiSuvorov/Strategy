@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Abstractions;
 using Abstractions.Commands.CommandsInterfaces;
 using UnityEngine;
+using UserControlSystem.UI.Model;
 using Utils;
 using Zenject;
 
@@ -26,11 +27,16 @@ namespace UserControlSystem
               .To<PatrolCommandCommandCreator>().AsTransient();
             Container.Bind<CommandCreatorBase<IStopCommand>>()
              .To<StopCommandCommandCreator>().AsTransient();
-           
+            Container.Bind<CommandCreatorBase<ISetRendezvousPointCommand>>()
+             .To<SetRendezvousPointCommandCreator>().AsTransient();
+
+            Container.Bind<float>().WithId("Chomper").FromInstance(5f);
+            Container.Bind<string>().WithId("Chomper").FromInstance("Chomper");
 
 
             Container.Bind<CommandButtonsModel>().AsTransient();
 
+            Container.Bind<BottomCenterModel>().AsTransient();
             Container.Bind<IObservable<ISelectable>>().FromInstance(_selectableValue);
         }
     }

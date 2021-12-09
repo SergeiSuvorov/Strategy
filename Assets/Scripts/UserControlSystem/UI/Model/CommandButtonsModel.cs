@@ -19,12 +19,14 @@ namespace UserControlSystem
         [Inject] private CommandCreatorBase<IAttackCommand> _attacker;
         [Inject] private CommandCreatorBase<IPatrolCommand> _patroller;
         [Inject] private CommandCreatorBase<IStopCommand> _stoper;
+        [Inject] private CommandCreatorBase<ISetRendezvousPointCommand> _rendevouser;
 
-        private CommandExecutorBase<IMoveCommand> _moverExecutor;
+        private ICommandExecutor<IMoveCommand> _moverExecutor;
 
         private bool _commandIsPending;
         [Inject] private Vector3Value _groundClicksRMB;
-        public void OnCommandButtonClicked(ICommandExecutor commandExecutor)
+       
+        public void OnCommandButtonClicked(ICommandExecutor commandExecutor, ICommandsQueue commandsQueue)
         {
             if (_commandIsPending)
             {
@@ -33,23 +35,29 @@ namespace UserControlSystem
             _commandIsPending = true;
             OnCommandAccepted?.Invoke(commandExecutor);
 
-            _unitProducer.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
-            _mover.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
-            _attacker.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
-            _patroller.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
-            _stoper.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(commandExecutor, command));
+            _unitProducer.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _attacker.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _stoper.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _mover.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _patroller.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _rendevouser.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
         }
 
-        public void ExecuteCommandWrapper(ICommandExecutor commandExecutor, object command)
+        public void ExecuteCommandWrapper(object command, ICommandsQueue commandsQueue)
         {
-            commandExecutor.ExecuteCommand(command);
+            if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+            {
+                Debug.Log("commandsQueue.Clear");
+                commandsQueue.Clear();
+            }
+            commandsQueue.EnqueueCommand(command);
             _commandIsPending = false;
             OnCommandSent?.Invoke();
         }
-
+       
         private void OnGroundClicksRMB(Vector3 argument)
         {
-            _moverExecutor.ExecuteCommand(new MoveCommand(argument));
+            _moverExecutor.TryExecuteCommand(new MoveCommand(argument));
         }
 
         public void OnSelectionChanged(IEnumerable<ICommandExecutor> commandExecutors)
@@ -61,7 +69,7 @@ namespace UserControlSystem
 
             foreach (var currentExecutor in commandExecutors)
             {
-                var moveCommand = currentExecutor as CommandExecutorBase<IMoveCommand>;
+                var moveCommand = currentExecutor as ICommandExecutor<IMoveCommand>;
                 if (moveCommand != null)
                 {
                     _moverExecutor = moveCommand;

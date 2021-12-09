@@ -4,6 +4,7 @@ using Abstractions.Commands;
 using UnityEngine.AI;
 using System.Threading;
 using Utils;
+using System.Threading.Tasks;
 
 namespace Core
 {
@@ -16,7 +17,7 @@ namespace Core
         [SerializeField] private StopCommandExecutor _stopCommand;
 
         public float Speed => _speed;
-        public override async void ExecuteSpecificCommand(IMoveCommand command)
+        public override async Task ExecuteSpecificCommand(IMoveCommand command)
         {
             _agent.speed = _speed;
             _agent.destination = command.Target;
