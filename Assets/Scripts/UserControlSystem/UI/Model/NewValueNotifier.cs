@@ -17,7 +17,6 @@ namespace UserControlSystem
 
         private void ONNewValue(TAwaited obj)
         {
-            Debug.Log(obj.ToString());
             _scriptableObjectValueBase.OnNewValue -= ONNewValue;
             SetResult(obj);
             CompletedAction();

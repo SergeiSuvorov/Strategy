@@ -17,23 +17,32 @@ namespace Core
         [SerializeField] private StopCommandExecutor _stopCommand;
 
         public float Speed => _speed;
+        private static readonly int Walk = Animator.StringToHash("Walk");
+        private static readonly int Idle = Animator.StringToHash("Idle");
+
         public override async Task ExecuteSpecificCommand(IMoveCommand command)
         {
             _agent.speed = _speed;
             _agent.destination = command.Target;
-            _animator.SetTrigger("Walk");
+            _animator.SetTrigger(Walk);
             _stopCommand.CancellationToken = new CancellationTokenSource();
             try
             {
-                await _stop.WithCancellation(_stopCommand.CancellationToken.Token);
+                await _stop
+                    .WithCancellation
+                    (
+                        _stopCommand
+                            .CancellationToken
+                            .Token
+                    );
             }
             catch
             {
-                _agent.Stop();
+                _agent.isStopped = true;
+                _agent.ResetPath();
             }
             _stopCommand.CancellationToken = null;
-
-            _animator.SetTrigger("Idle");
+            _animator.SetTrigger(Idle);
         }
     }
 }
