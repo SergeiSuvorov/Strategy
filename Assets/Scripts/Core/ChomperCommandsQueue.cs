@@ -7,6 +7,8 @@ using UserControlSystem.CommandsRealization;
 
 public class ChomperCommandsQueue : MonoBehaviour, ICommandsQueue
 {
+    public ICommand CurrentCommand => _innerCollection.Count > 0 ? _innerCollection[0] : default;
+
     [Inject] CommandExecutorBase<IMoveCommand> _moveCommandExecutor;
     [Inject] CommandExecutorBase<IPatrolCommand> _patrolCommandExecutor;
     [Inject] CommandExecutorBase<IAttackCommand> _attackCommandExecutor;
@@ -14,23 +16,19 @@ public class ChomperCommandsQueue : MonoBehaviour, ICommandsQueue
 
     private ReactiveCollection<ICommand> _innerCollection = new ReactiveCollection<ICommand>();
 
-    [Inject] private void Init()
+    [Inject]
+    private void Init()
     {
-        _innerCollection.ObserveAdd().Subscribe(OnNewCommand).AddTo(this);
+        _innerCollection
+            .ObserveAdd().Subscribe(ONNewCommand).AddTo(this);
     }
 
-    private void OnNewCommand(ICommand command, int index)
+    private void ONNewCommand(ICommand command, int index)
     {
-        Debug.Log(index);
-        Debug.Log(command.GetType().ToString());
         if (index == 0)
+        {
             ExecuteCommand(command);
-    }
-    public void Clear()
-    {
-        _innerCollection.Clear();
-        _stopCommandExecutor.ExecuteSpecificCommand(new StopCommand());
-
+        }
     }
 
     private async void ExecuteCommand(ICommand command)
@@ -48,11 +46,8 @@ public class ChomperCommandsQueue : MonoBehaviour, ICommandsQueue
 
     private void CheckTheQueue()
     {
-        Debug.Log(_innerCollection.Count);
-        
         if (_innerCollection.Count > 0)
         {
-            Debug.Log(_innerCollection[0].GetType().ToString());
             ExecuteCommand(_innerCollection[0]);
         }
     }
@@ -63,5 +58,10 @@ public class ChomperCommandsQueue : MonoBehaviour, ICommandsQueue
         _innerCollection.Add(command);
     }
 
+    public void Clear()
+    {
+        _innerCollection.Clear();
+        _stopCommandExecutor.ExecuteSpecificCommand(new StopCommand());
+    }
 
 }

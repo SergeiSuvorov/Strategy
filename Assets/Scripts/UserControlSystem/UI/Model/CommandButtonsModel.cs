@@ -22,10 +22,13 @@ namespace UserControlSystem
         [Inject] private CommandCreatorBase<ISetRendezvousPointCommand> _rendevouser;
 
         private ICommandExecutor<IMoveCommand> _moverExecutor;
+        private ICommandsQueue _queue;
 
+        private Vector3 _oldValue;
         private bool _commandIsPending;
+
         [Inject] private Vector3Value _groundClicksRMB;
-       
+
         public void OnCommandButtonClicked(ICommandExecutor commandExecutor, ICommandsQueue commandsQueue)
         {
             if (_commandIsPending)
@@ -43,28 +46,42 @@ namespace UserControlSystem
             _rendevouser.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
         }
 
+
         public void ExecuteCommandWrapper(object command, ICommandsQueue commandsQueue)
         {
             if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
             {
-                Debug.Log("commandsQueue.Clear");
                 commandsQueue.Clear();
             }
             commandsQueue.EnqueueCommand(command);
             _commandIsPending = false;
             OnCommandSent?.Invoke();
         }
-       
-        private void OnGroundClicksRMB(Vector3 argument)
+
+        public void OnSelectionChanged()
         {
-            _moverExecutor.TryExecuteCommand(new MoveCommand(argument));
+            _commandIsPending = false;
+            processOnCancel();
         }
 
-        public void OnSelectionChanged(IEnumerable<ICommandExecutor> commandExecutors)
+
+        private void OnGroundClicksRMB(Vector3 argument)
+        {
+            Debug.Log(_oldValue != argument);
+            if (_oldValue != argument)
+            {
+                _oldValue = argument;
+                _mover.ProcessCommandExecutor(_moverExecutor, command => ExecuteCommandWrapper(command, _queue));
+            }
+        }
+
+        public void OnSelectionChanged(IEnumerable<ICommandExecutor> commandExecutors, ICommandsQueue queue)
         {
             _moverExecutor = null;
             _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             _commandIsPending = false;
+
+            _queue = queue;
             processOnCancel();
 
             foreach (var currentExecutor in commandExecutors)
@@ -72,19 +89,26 @@ namespace UserControlSystem
                 var moveCommand = currentExecutor as ICommandExecutor<IMoveCommand>;
                 if (moveCommand != null)
                 {
+                    Debug.Log(currentExecutor.GetType().ToString());
                     _moverExecutor = moveCommand;
                     _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
+                    _oldValue = _groundClicksRMB.CurrentValue;
                 }
             }
+            
         }
 
         private void processOnCancel()
         {
             _unitProducer.ProcessCancel();
-            _mover.ProcessCancel();
             _attacker.ProcessCancel();
+            _stoper.ProcessCancel();
+            _mover.ProcessCancel();
             _patroller.ProcessCancel();
+            _rendevouser.ProcessCancel();
+
             OnCommandCancel?.Invoke();
         }
+
     }
 }
