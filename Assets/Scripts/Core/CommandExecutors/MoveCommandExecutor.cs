@@ -24,6 +24,7 @@ namespace Core
         {
             _agent.speed = _speed;
             _agent.destination = command.Target;
+            _agent.stoppingDistance = 0.1f;
             _animator.SetTrigger(Walk);
             _stopCommand.CancellationToken = new CancellationTokenSource();
             try
@@ -42,6 +43,7 @@ namespace Core
                 _agent.ResetPath();
             }
             _stopCommand.CancellationToken = null;
+            Debug.Log("Stop");
             _animator.SetTrigger(Idle);
         }
     }

@@ -1124,7 +1124,6 @@ GameObject:
   - component: {fileID: 2546414977321465230}
   - component: {fileID: 412226508089752518}
   - component: {fileID: 291758936914012656}
-  - component: {fileID: 1034482618170309681}
   - component: {fileID: 4533386356241123284}
   - component: {fileID: 1627425755302628109}
   - component: {fileID: 7759101397200454490}
@@ -1133,6 +1132,9 @@ GameObject:
   - component: {fileID: 7079960805223854330}
   - component: {fileID: 3121120650600610812}
   - component: {fileID: 7196736799834520257}
+  - component: {fileID: 567615639}
+  - component: {fileID: 567615640}
+  - component: {fileID: 8257868110800311058}
   m_Layer: 0
   m_Name: Chomper
   m_TagString: Untagged
@@ -1167,7 +1169,7 @@ Animator:
   m_GameObject: {fileID: 2546414977312065100}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2732fe64dd2799f439fb845921df626b, type: 3}
-  m_Controller: {fileID: 9100000, guid: 2bc84b452a645d04a8d91fe675c3c2f1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1e883ab43feb380479b3c6906c3cce59, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1192,6 +1194,9 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: 9908913e928c42d4f9f1891893bbc424, type: 3}
   _selectedOutline: {fileID: 291758936914012656}
   _pivotPoint: {fileID: 2546414977312103020}
+  _animator: {fileID: 2546414977321465230}
+  _stopCommand: {fileID: 7759101397200454490}
+  _damage: 25
 --- !u!114 &291758936914012656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1210,19 +1215,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &1034482618170309681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2546414977312065100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e79a69117e241114baf125fe9fb5c3d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _damage: 10
 --- !u!114 &4533386356241123284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1341,9 +1333,49 @@ MonoBehaviour:
   _scriptableObjectInstallers: []
   _monoInstallers:
   - {fileID: 3121120650600610812}
+  - {fileID: 567615639}
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
+--- !u!114 &567615639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2546414977312065100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb758dc0d05fad74b8d6331ec6b38d97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &567615640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2546414977312065100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030397e05d764aa5870d66b78c76e6d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 2546414977321465230}
+  _stopCommandExecutor: {fileID: 7759101397200454490}
+--- !u!114 &8257868110800311058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2546414977312065100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb749424960380149a24c7da4c374602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _factionId: 1
 --- !u!1 &2546414977312065102
 GameObject:
   m_ObjectHideFlags: 0

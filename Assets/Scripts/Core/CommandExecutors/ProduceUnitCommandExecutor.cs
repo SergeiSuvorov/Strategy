@@ -40,6 +40,9 @@ namespace Core.CommandExecutors
                 RemoveTaskAtIndex(0);
                 var unit = _diContainer.InstantiatePrefab(innerTask.UnitPrefab, new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)), Quaternion.identity, _unitsParent);
                 var unitMover = unit.GetComponent<CommandExecutorBase<IMoveCommand>>();
+                var factionMember = unit.GetComponent<FactionMember>();
+                factionMember.SetFaction(GetComponent<FactionMember>().FactionId);
+
                 unitMover.ExecuteSpecificCommand(new MoveCommand(_mainBuilding.RendezvousPoint));
             }
         }
