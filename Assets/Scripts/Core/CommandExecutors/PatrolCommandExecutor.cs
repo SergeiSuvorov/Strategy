@@ -9,7 +9,7 @@ namespace Core
     {
         public override async Task ExecuteSpecificCommand(IPatrolCommand command)
         {
-            Debug.Log("Patroling ");
+            Debug.Log("Patroling  from" + command.From + " to " + command.To);
         }
     }
 }

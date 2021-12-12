@@ -68,7 +68,7 @@ namespace UserControlSystem
         private void OnGroundClicksRMB(Vector3 argument)
         {
             Debug.Log(_oldValue != argument);
-            if (_oldValue != argument)
+            if (_oldValue != argument  && !_commandIsPending)
             {
                 _oldValue = argument;
                 _mover.ProcessCommandExecutor(_moverExecutor, command => ExecuteCommandWrapper(command, _queue));
@@ -95,7 +95,7 @@ namespace UserControlSystem
                     _oldValue = _groundClicksRMB.CurrentValue;
                 }
             }
-            
+
         }
 
         private void processOnCancel()
