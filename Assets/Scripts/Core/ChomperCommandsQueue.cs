@@ -7,7 +7,7 @@ using UserControlSystem.CommandsRealization;
 
 public class ChomperCommandsQueue : MonoBehaviour, ICommandsQueue
 {
-    public ICommand CurrentCommand => _innerCollection.Count > 0 ? _innerCollection[0] : default;
+    //public ICommand CurrentCommand => _innerCollection.Count > 0 ? _innerCollection[0] : default;
 
     [Inject] CommandExecutorBase<IMoveCommand> _moveCommandExecutor;
     [Inject] CommandExecutorBase<IPatrolCommand> _patrolCommandExecutor;

@@ -1,15 +1,18 @@
 ﻿using Abstractions.Commands;
 using Zenject;
 
-public class CommandExecutorsInstaller : MonoInstaller
+namespace Core
 {
-    public override void InstallBindings()
+    public sealed class CommandExecutorsInstaller : MonoInstaller
     {
-        var executors = gameObject.GetComponentsInChildren<ICommandExecutor>();
-        foreach (var executor in executors)
+        public override void InstallBindings()
         {
-            var baseType = executor.GetType().BaseType;
-            Container.Bind(baseType).FromInstance(executor);
+            var executors = gameObject.GetComponentsInChildren<ICommandExecutor>();
+            foreach (var executor in executors)
+            {
+                var baseType = executor.GetType().BaseType;
+                Container.Bind(baseType).FromInstance(executor);
+            }
         }
     }
 }
