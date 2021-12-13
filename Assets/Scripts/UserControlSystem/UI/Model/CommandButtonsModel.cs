@@ -21,19 +21,18 @@ namespace UserControlSystem
         [Inject] private CommandCreatorBase<IStopCommand> _stoper;
         [Inject] private CommandCreatorBase<ISetRendezvousPointCommand> _rendevouser;
 
-        private ICommandExecutor<IMoveCommand> _moverExecutor;
         private ICommandsQueue _queue;
 
-        private Vector3 _oldValue;
         private bool _commandIsPending;
 
         [Inject] private Vector3Value _groundClicksRMB;
 
         public void OnCommandButtonClicked(ICommandExecutor commandExecutor, ICommandsQueue commandsQueue)
         {
+            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             if (_commandIsPending)
             {
-                processOnCancel();
+                ProcessOnCancel();
             }
             _commandIsPending = true;
             OnCommandAccepted?.Invoke(commandExecutor);
@@ -49,6 +48,7 @@ namespace UserControlSystem
 
         public void ExecuteCommandWrapper(object command, ICommandsQueue commandsQueue)
         {
+            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
             {
                 commandsQueue.Clear();
@@ -56,49 +56,33 @@ namespace UserControlSystem
             commandsQueue.EnqueueCommand(command);
             _commandIsPending = false;
             OnCommandSent?.Invoke();
+            _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
         }
 
         public void OnSelectionChanged()
         {
             _commandIsPending = false;
-            processOnCancel();
+            ProcessOnCancel();
         }
 
 
         private void OnGroundClicksRMB(Vector3 argument)
         {
-            Debug.Log(_oldValue != argument);
-            if (_oldValue != argument  && !_commandIsPending)
-            {
-                _oldValue = argument;
-                _mover.ProcessCommandExecutor(_moverExecutor, command => ExecuteCommandWrapper(command, _queue));
-            }
+            Debug.Log("Нажата правая кнопка мыши");
+            ExecuteCommandWrapper(new MoveCommand(argument), _queue);
         }
 
-        public void OnSelectionChanged(IEnumerable<ICommandExecutor> commandExecutors, ICommandsQueue queue)
+        public void OnSelectionChanged(ICommandsQueue queue)
         {
-            _moverExecutor = null;
             _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             _commandIsPending = false;
 
             _queue = queue;
-            processOnCancel();
-
-            foreach (var currentExecutor in commandExecutors)
-            {
-                var moveCommand = currentExecutor as ICommandExecutor<IMoveCommand>;
-                if (moveCommand != null)
-                {
-                    Debug.Log(currentExecutor.GetType().ToString());
-                    _moverExecutor = moveCommand;
-                    _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
-                    _oldValue = _groundClicksRMB.CurrentValue;
-                }
-            }
-
+            ProcessOnCancel();
+            _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
         }
 
-        private void processOnCancel()
+        private void ProcessOnCancel()
         {
             _unitProducer.ProcessCancel();
             _attacker.ProcessCancel();

@@ -1244,6 +1244,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfefd0c49138ab54a8740f3da8770883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stop: {fileID: 1767732628}
+  _stopCommand: {fileID: 7759101397200454490}
+  _move: {fileID: 4533386356241123284}
 --- !u!114 &7759101397200454490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1363,7 +1366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb749424960380149a24c7da4c374602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _factionId: 1
+  _factionId: 0
 --- !u!114 &567615627
 MonoBehaviour:
   m_ObjectHideFlags: 0

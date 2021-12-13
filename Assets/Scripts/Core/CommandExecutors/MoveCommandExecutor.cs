@@ -24,7 +24,7 @@ namespace Core
         {
             _agent.speed = _speed;
             _agent.destination = command.Target;
-            _agent.stoppingDistance = 0.1f;
+            _agent.stoppingDistance = 0.5f;
             _animator.SetTrigger(Walk);
             _stopCommand.CancellationToken = new CancellationTokenSource();
             try
