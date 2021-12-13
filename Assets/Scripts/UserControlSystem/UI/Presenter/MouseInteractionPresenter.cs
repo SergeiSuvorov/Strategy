@@ -25,10 +25,10 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
 
         var lBMClickStreem = Observable.EveryUpdate()
             .Where(_ => !_eventSystem.IsPointerOverGameObject())
-            .Where(_ => Input.GetMouseButton(0));
+            .Where(_ => Input.GetMouseButtonDown(0));
         var rBMClickStreem = Observable.EveryUpdate()
             .Where(_ => !_eventSystem.IsPointerOverGameObject())
-            .Where(_ => Input.GetMouseButton(1));
+            .Where(_ => Input.GetMouseButtonDown(1));
 
         var lBMClickRay = lBMClickStreem
             .Select(_ => _camera.ScreenPointToRay(Input.mousePosition));

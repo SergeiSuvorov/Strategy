@@ -42,7 +42,6 @@ namespace Core.CommandExecutors
                 var unitMover = unit.GetComponent<CommandExecutorBase<IMoveCommand>>();
                 var factionMember = unit.GetComponent<FactionMember>();
                 factionMember.SetFaction(GetComponent<FactionMember>().FactionId);
-
                 unitMover.ExecuteSpecificCommand(new MoveCommand(_mainBuilding.RendezvousPoint));
             }
         }

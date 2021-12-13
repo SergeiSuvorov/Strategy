@@ -44,7 +44,7 @@ namespace UserControlSystem.UI.Presenter
                 commandExecutors.AddRange((selectable as Component).GetComponentsInParent<ICommandExecutor>());
                 var queue = (selectable as Component).GetComponentInParent<ICommandsQueue>();
                 _view.MakeLayout(commandExecutors, queue);
-                _model.OnSelectionChanged(commandExecutors, queue);
+                _model.OnSelectionChanged(queue);
             }
         }
     }
