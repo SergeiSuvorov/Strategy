@@ -11,6 +11,7 @@ namespace UserControlSystem.CommandsRealization
         [Inject(Id = "Chomper")] public string UnitName { get; }
         [Inject(Id = "Chomper")] public Sprite Icon { get; }
         [Inject(Id = "Chomper")] public float ProductionTime { get; }
+        [Inject(Id = "Chomper")] public int ProductionCost { get; }
 
         [InjectAsset("Chomper")] private GameObject _unitPrefab;
 

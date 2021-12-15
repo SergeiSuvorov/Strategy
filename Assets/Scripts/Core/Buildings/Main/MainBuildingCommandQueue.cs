@@ -10,6 +10,7 @@ public class MainBuildingCommandQueue : MonoBehaviour, ICommandsQueue
 {
     [Inject] CommandExecutorBase<IProduceUnitCommand> _produceUnitCommandExecutor;
     [Inject] CommandExecutorBase<ISetRendezvousPointCommand> _setRendezvousPointCommandExecutor;
+    public ICommand CurrentCommand => default;
 
     public void Clear() { }
 

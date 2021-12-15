@@ -6,12 +6,14 @@ using UserControlSystem.CommandsRealization;
 
 namespace Core
 {
-    public class Chomper : MonoBehaviour, ISelectable, IUnit, IDamageDealer,IAttackable
+    public class Chomper : MonoBehaviour, ISelectable, IUnit, IDamageDealer,IAttackable, IAutomaticAttacker
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
         public Sprite Icon => _icon;
         public Transform PivotPoint => _pivotPoint;
+        public float VisionRadius => _visionRadius;
+        public int Damage => _damage;
 
         [SerializeField] private float _maxHealth = 100;
         [SerializeField] private Sprite _icon;
@@ -20,7 +22,8 @@ namespace Core
         [SerializeField] private Animator _animator;
         [SerializeField] private StopCommandExecutor _stopCommand;
         [SerializeField] private int _damage = 25;
-        public int Damage => _damage;
+        [SerializeField] private float _visionRadius = 8f;
+
 
         private float _health = 100;
         public void OnSelected()

@@ -1,15 +1,10 @@
-using Abstractions;
+﻿using Abstractions;
 using UnityEngine;
 using Tools;
-using Abstractions.Commands.CommandsInterfaces;
-using Abstractions.Commands;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Core
 {
-
-    public class MainBuilding : MonoBehaviour, ISelectable, IAttackable
+    public class MoneyFactory : MonoBehaviour, ISelectable, IAttackable
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
@@ -23,10 +18,29 @@ namespace Core
         [SerializeField] private Sprite _icon;
         [SerializeField] private Outline _selectedOutline;
         [SerializeField] private Transform _pivotPoint;
-        [SerializeField] private Transform _unitsParent;
 
-        private float _health = 1000;
-        private List<IProduceUnitCommand> _creationQueue = new List<IProduceUnitCommand>();
+        private float _health = 700;
+
+        private float _factoryTime = 5f;
+        private float _curentTime = 5f;
+        private int _factoryId;
+
+        private void Start()
+        {
+            _factoryId= GetComponent<FactionMember>().FactionId;
+        }
+        private void Update()
+        {
+            if(_curentTime>=0)
+            {
+                _curentTime -= Time.deltaTime;
+            }
+            else
+            {
+                _curentTime = _factoryTime;
+                EconomicModule.ChangeMoneyCount(_factoryId,100);
+            }
+        }
         public void OnSelected()
         {
             _selectedOutline.enabled = true;
@@ -49,5 +63,7 @@ namespace Core
                 Destroy(gameObject);
             }
         }
+
+
     }
 }

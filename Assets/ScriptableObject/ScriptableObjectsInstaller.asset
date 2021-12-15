@@ -17,3 +17,4 @@ MonoBehaviour:
   _attackable: {fileID: 11400000, guid: e1012782835ee1a469f3d471364cfe29, type: 2}
   _selectables: {fileID: 11400000, guid: 7141aae4b16134e49af0215b6da77bcf, type: 2}
   _chomperSprite: {fileID: 21300000, guid: 9908913e928c42d4f9f1891893bbc424, type: 3}
+  _chomperModSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
