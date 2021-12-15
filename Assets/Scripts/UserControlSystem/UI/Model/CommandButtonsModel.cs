@@ -26,10 +26,11 @@ namespace UserControlSystem
         private bool _commandIsPending;
 
         [Inject] private Vector3Value _groundClicksRMB;
+        [Inject] private AttackableValue _attackClicksRMB;
 
         public void OnCommandButtonClicked(ICommandExecutor commandExecutor, ICommandsQueue commandsQueue)
         {
-            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
+            UnsubscribeFromValueChange();
             if (_commandIsPending)
             {
                 ProcessOnCancel();
@@ -48,7 +49,7 @@ namespace UserControlSystem
 
         public void ExecuteCommandWrapper(object command, ICommandsQueue commandsQueue)
         {
-            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
+            UnsubscribeFromValueChange();
             if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
             {
                 commandsQueue.Clear();
@@ -56,7 +57,7 @@ namespace UserControlSystem
             commandsQueue.EnqueueCommand(command);
             _commandIsPending = false;
             OnCommandSent?.Invoke();
-            _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
+            SubscribeFromValueChange();
         }
 
         public void OnSelectionChanged()
@@ -68,20 +69,37 @@ namespace UserControlSystem
 
         private void OnGroundClicksRMB(Vector3 argument)
         {
-            Debug.Log("Нажата правая кнопка мыши");
+            Debug.Log("Нажата правая кнопка мыши - движение");
             ExecuteCommandWrapper(new MoveCommand(argument), _queue);
+        }
+
+        private void OnAttackClicksRMB(IAttackable argument)
+        {
+            Debug.Log("Нажата правая кнопка мыши - атака");
+            ExecuteCommandWrapper(new AttackCommand(argument), _queue);
         }
 
         public void OnSelectionChanged(ICommandsQueue queue)
         {
-            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
+            UnsubscribeFromValueChange();
             _commandIsPending = false;
 
             _queue = queue;
             ProcessOnCancel();
-            _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
+            SubscribeFromValueChange();
         }
 
+        private void UnsubscribeFromValueChange()
+        {
+            _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
+            _attackClicksRMB.OnNewValue -= OnAttackClicksRMB;
+        }
+
+        private void SubscribeFromValueChange()
+        {
+            _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
+            _attackClicksRMB.OnNewValue += OnAttackClicksRMB;
+        }
         private void ProcessOnCancel()
         {
             _unitProducer.ProcessCancel();
