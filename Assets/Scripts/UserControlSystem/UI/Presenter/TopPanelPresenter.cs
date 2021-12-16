@@ -11,9 +11,10 @@ public sealed class TopPanelPresenter : MonoBehaviour
     [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private Button _menuButton;
     [SerializeField] private GameObject _menuGo;
-
+    [SerializeField] private TMP_Text _moneyText;
+    [SerializeField] private int _playerFactionId; 
     [Inject]
-    private void Init(ITimeModel timeModel)
+    private void Init(ITimeModel timeModel, IShowFactionMoney showFaction)
     {
         timeModel.GameTime.Subscribe(seconds =>
         {
@@ -28,5 +29,13 @@ public sealed class TopPanelPresenter : MonoBehaviour
             Time.timeScale = Convert.ToInt32(!isMinuOpen);
         });
 
+        showFaction.FactionMoney.ObserveReplace().Subscribe(replaceEvent =>
+        {
+            if(replaceEvent.Key== _playerFactionId)
+            {
+                _moneyText.text ="$"+ replaceEvent.NewValue;
+            }
+        }
+        );
     }
 }

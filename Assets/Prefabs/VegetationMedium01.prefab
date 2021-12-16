@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: 1639671152023679006}
   - component: {fileID: 4450335752448711965}
   - component: {fileID: 2696622464156865934}
+  - component: {fileID: 6136708208908570100}
+  - component: {fileID: 8512786225997762010}
   m_Layer: 0
   m_Name: VegetationMedium01
   m_TagString: Untagged
@@ -164,6 +166,7 @@ MonoBehaviour:
   _scriptableObjectInstallers: []
   _monoInstallers:
   - {fileID: 1639671152023679006}
+  - {fileID: 6136708208908570100}
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
@@ -204,6 +207,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _factionId: 2
+--- !u!114 &6136708208908570100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140199755297983448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbd23c97d4c696a47977031316fbf47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _factionMemberParallelInfoUpdater: {fileID: 8512786225997762010}
+--- !u!114 &8512786225997762010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140199755297983448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8caf8bd7245f2704f952cd3721519622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &140199755297983450
 GameObject:
   m_ObjectHideFlags: 0

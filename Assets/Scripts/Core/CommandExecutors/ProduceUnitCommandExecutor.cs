@@ -19,11 +19,13 @@ namespace Core.CommandExecutors
         [Inject] private DiContainer _diContainer;
 
         private MainBuilding _mainBuilding;
+        private int _factionId;
 
         private ReactiveCollection<IUnitProductionTask> _queue = new ReactiveCollection<IUnitProductionTask>();
         private void Awake()
         {
             _mainBuilding = GetComponent<MainBuilding>();
+            _factionId = GetComponent<FactionMember>().FactionId;
         }
 
         private void Update()
@@ -38,10 +40,11 @@ namespace Core.CommandExecutors
             if (innerTask.TimeLeft <= 0)
             {
                 RemoveTaskAtIndex(0);
-                var unit = _diContainer.InstantiatePrefab(innerTask.UnitPrefab, new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)), Quaternion.identity, _unitsParent);
+
+                var unit = _diContainer.InstantiatePrefab(innerTask.UnitPrefab, transform.position, Quaternion.identity, _unitsParent);
                 var unitMover = unit.GetComponent<CommandExecutorBase<IMoveCommand>>();
                 var factionMember = unit.GetComponent<FactionMember>();
-                factionMember.SetFaction(GetComponent<FactionMember>().FactionId);
+                factionMember.SetFaction(_factionId);
                 unitMover.ExecuteSpecificCommand(new MoveCommand(_mainBuilding.RendezvousPoint));
             }
         }
@@ -59,10 +62,16 @@ namespace Core.CommandExecutors
 
         public override async Task ExecuteSpecificCommand(IProduceUnitCommand command)
         {
-            if (_queue.Count >= _maximumUnitsInQueue)
+
+            if (EconomicModule.GetFactionMoneyCount(_factionId) < command.ProductionCost)
+                Debug.Log("Не хватает денег");
+            else if (_queue.Count >= _maximumUnitsInQueue)
                 Debug.Log("Очередь производства заполнена");
             else
-            _queue.Add(new UnitProductionTask(command.ProductionTime, command.Icon, command.UnitPrefab, command.UnitName));
+            {
+                _queue.Add(new UnitProductionTask(command.ProductionTime, command.Icon, command.UnitPrefab, command.UnitName));
+                EconomicModule.ChangeMoneyCount(_factionId, -command.ProductionCost);
+            }
         }
     }
 }

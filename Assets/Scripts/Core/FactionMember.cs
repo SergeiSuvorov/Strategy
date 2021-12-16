@@ -21,6 +21,13 @@ namespace Core
                 }
             }
         }
+        public static List<int> GetFactionList()
+        {
+            lock (_membersCount)
+            {
+                return new List<int>(_membersCount.Keys);
+            }
+        }
         public static int GetWinner()
         {
             lock (_membersCount)
@@ -51,10 +58,6 @@ namespace Core
         {
             lock (_membersCount)
             {
-
-                //Debug.Log(_factionId);
-                //Debug.Log(_membersCount[_factionId].Count);
-
                 if (!_membersCount.ContainsKey(_factionId))
                 {
                     _membersCount.Add(_factionId, new List<int>());

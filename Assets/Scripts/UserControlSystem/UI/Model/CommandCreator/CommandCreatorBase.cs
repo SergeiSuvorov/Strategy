@@ -6,17 +6,16 @@ namespace UserControlSystem
 {
     public abstract class CommandCreatorBase<T> where T : ICommand
     {
-        public ICommandExecutor ProcessCommandExecutor(ICommandExecutor commandExecutor, Action<T> callback)
+        public void ProcessCommandExecutor(ICommandExecutor commandExecutor, Action<T> callback)
         {
             var classSpecificExecutor = commandExecutor as ICommandExecutor<T>;
             if (classSpecificExecutor != null)
             {
-                ClassSpecificCommandCreation(callback);
+                ClassSpecificCommandCreation(commandExecutor, callback);
             }
-            return commandExecutor;
         }
 
-        protected abstract void ClassSpecificCommandCreation(Action<T> creationCallback);
+        protected abstract void ClassSpecificCommandCreation(ICommandExecutor commandExecutor, Action<T> creationCallback);
 
         public virtual void ProcessCancel() { }
     }

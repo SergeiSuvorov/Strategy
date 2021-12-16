@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Core
 {
 
-    public class MainBuilding : MonoBehaviour, ISelectable, IAttackable
+    public class MainBuilding : MonoBehaviour, ISelectable, IAttackable, IUnitTypeCreater
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
@@ -18,15 +18,15 @@ namespace Core
 
         public Transform PivotPoint => _pivotPoint;
 
+        public UnitType UnitType => _unitType;
+
         [SerializeField] private float _maxHealth = 1000;
         [SerializeField] private int createPrefabDelayTime = 5000;
         [SerializeField] private Sprite _icon;
         [SerializeField] private Outline _selectedOutline;
         [SerializeField] private Transform _pivotPoint;
-        [SerializeField] private Transform _unitsParent;
-
-        private float _health = 1000;
-        private List<IProduceUnitCommand> _creationQueue = new List<IProduceUnitCommand>();
+        [SerializeField] private UnitType _unitType;
+       private float _health = 1000;
         public void OnSelected()
         {
             _selectedOutline.enabled = true;
