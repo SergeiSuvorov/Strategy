@@ -1194,7 +1194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 100
-  _icon: {fileID: 21300000, guid: 9908913e928c42d4f9f1891893bbc424, type: 3}
+  _icon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
   _selectedOutline: {fileID: 291758936914012656}
   _pivotPoint: {fileID: 2546414977312103020}
   _animator: {fileID: 2546414977321465230}

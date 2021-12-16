@@ -16,6 +16,7 @@ public class MainBuildingCommandQueue : MonoBehaviour, ICommandsQueue
 
     public async void EnqueueCommand(object command)
     {
+        Debug.Log("MainBuildingCommandQueue");
         await _produceUnitCommandExecutor.TryExecuteCommand(command);
         await _setRendezvousPointCommandExecutor.TryExecuteCommand(command);
     }

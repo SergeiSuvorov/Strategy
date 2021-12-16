@@ -14,6 +14,6 @@ namespace UserControlSystem.CommandsRealization
         [Inject(Id = "Chomper")] public int ProductionCost { get; }
 
         [InjectAsset("Chomper")] private GameObject _unitPrefab;
-
+        
     }
 }

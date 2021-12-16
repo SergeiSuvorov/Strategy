@@ -66,7 +66,6 @@ namespace UserControlSystem.UI.View
             else
             {
 
-
                 _imageHolders[index].SetActive(true);
                 _images[index].sprite = task.Icon;
 
