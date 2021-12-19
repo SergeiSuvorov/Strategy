@@ -10,9 +10,9 @@ namespace Core
         public IReadOnlyReactiveDictionary<int, int> FactionMoney => _factionMoney;
 
         private static ReactiveDictionary<int, int> _factionMoney = new ReactiveDictionary<int, int>();
-        private ReactiveProperty<string> property;
         public static void ChangeMoneyCount(int factionId, int MoneyChangeCount)
         {
+            if(_factionMoney.ContainsKey(factionId))
             _factionMoney[factionId] += MoneyChangeCount;
         }
 

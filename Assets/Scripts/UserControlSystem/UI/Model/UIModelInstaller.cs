@@ -38,6 +38,10 @@ namespace UserControlSystem
             Container.Bind<string>().WithId("Chomper Mod").FromInstance("Chomper Mod");
             Container.Bind<int>().WithId("Chomper Mod").FromInstance(200);
 
+            Container.Bind<float>().WithId("Spitter").FromInstance(5f);
+            Container.Bind<string>().WithId("Spitter").FromInstance("Spitter");
+            Container.Bind<int>().WithId("Spitter").FromInstance(400);
+
 
 
             Container.Bind<CommandButtonsModel>().AsTransient();

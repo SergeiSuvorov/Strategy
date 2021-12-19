@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Abstractions;
+﻿using Abstractions;
 using Abstractions.Commands;
 using Abstractions.Commands.CommandsInterfaces;
-using Assets.Scripts.Abstractions;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,26 +14,26 @@ namespace Core.CommandExecutors
 {
     public class AttackCommandExecutor : CommandExecutorBase<IAttackCommand>
     {
-        [SerializeField] private Animator _animator;
-        [SerializeField] private StopCommandExecutor _stopCommandExecutor;
+        [SerializeField] protected Animator _animator;
+        [SerializeField] protected StopCommandExecutor _stopCommandExecutor;
 
-        [Inject] private IHealthHolder _ourHealth;
-        [Inject(Id = "AttackDistance")] private float _attackingDistance;
-        [Inject(Id = "AttackPeriod")] private int _attackingPeriod;
+        [Inject] protected IHealthHolder _ourHealth;
+        [Inject(Id = "AttackDistance")] protected float _attackingDistance;
+        [Inject(Id = "AttackPeriod")] protected int _attackingPeriod;
 
-        private Vector3 _ourPosition;
-        private Vector3 _targetPosition;
-        private Quaternion _ourRotation;
+        protected Vector3 _ourPosition;
+        protected Vector3 _targetPosition;
+        protected Quaternion _ourRotation;
 
-        private readonly Subject<Vector3> _targetPositions = new Subject<Vector3>();
-        private readonly Subject<Quaternion> _targetRotations = new Subject<Quaternion>();
+        protected readonly Subject<Vector3> _targetPositions = new Subject<Vector3>();
+        protected readonly Subject<Quaternion> _targetRotations = new Subject<Quaternion>();
         private readonly Subject<IAttackable> _attackTargets = new Subject<IAttackable>();
 
-        private Transform _targetTransform;
+        protected Transform _targetTransform;
         private AttackOperation _currentAttackOp;
         
         [Inject]
-        private void Init()
+        protected void Init()
         {
             _targetPositions
                 .Select(value => new Vector3((float)Math.Round(value.x, 2), (float)Math.Round(value.y, 2), (float)Math.Round(value.z, 2)))
@@ -49,6 +48,8 @@ namespace Core.CommandExecutors
             _targetRotations
                 .ObserveOnMainThread()
                 .Subscribe(SetAttackRotation);
+
+            Debug.Log("AttackCommandExecutor Init");
         }
         
         private void SetAttackRotation(Quaternion targetRotation)
@@ -90,7 +91,7 @@ namespace Core.CommandExecutors
             _stopCommandExecutor.CancellationToken = null;
         }
         
-        private void Update()
+        protected void Update()
         {
             if (_currentAttackOp == null)
             {
@@ -111,7 +112,7 @@ namespace Core.CommandExecutors
         #region AttackOperation
 
         public sealed class AttackOperation : IAwaitable<AsyncExtensions.Void>
-	{
+	    {
     		public class AttackOperationAwaiter : AwaiterBase<AsyncExtensions.Void>
     		{
         		private AttackOperation _attackOperation;
@@ -136,10 +137,13 @@ namespace Core.CommandExecutors
     		private readonly IAttackable _target;
 
     		private bool _isCancelled;
-
-    		public AttackOperation(AttackCommandExecutor attackCommandExecutor, IAttackable target)
+            private readonly FactionMember _targetFactionMember;
+            private readonly FactionMember _factionMember;
+            public AttackOperation(AttackCommandExecutor attackCommandExecutor, IAttackable target)
     		{
-        		_target = target;
+                _factionMember = (attackCommandExecutor as Component).GetComponent<FactionMember>();
+                _targetFactionMember = (target as Component).GetComponent<FactionMember>();
+                _target = target;
         		_attackCommandExecutor = attackCommandExecutor;
 
 	        	var thread = new Thread(AttackAlgorythm);
@@ -160,7 +164,8 @@ namespace Core.CommandExecutors
                 			_attackCommandExecutor == null
                 			|| _attackCommandExecutor._ourHealth.Health == 0
                 			|| _target.Health == 0
-                			|| _isCancelled
+                            || _factionMember.FactionId == _targetFactionMember.FactionId
+                            || _isCancelled
                 			)
             			{
                 			OnComplete?.Invoke();

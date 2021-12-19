@@ -18,3 +18,4 @@ MonoBehaviour:
   _selectables: {fileID: 11400000, guid: 7141aae4b16134e49af0215b6da77bcf, type: 2}
   _chomperSprite: {fileID: 21300000, guid: 9908913e928c42d4f9f1891893bbc424, type: 3}
   _chomperModSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  _spitteSprite: {fileID: 21300000, guid: 77b3e18a60ed99341b574a27250634d2, type: 3}

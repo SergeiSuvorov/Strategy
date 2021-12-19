@@ -21,6 +21,8 @@ namespace Core
                 }
             }
         }
+
+
         public static List<int> GetFactionList()
         {
             lock (_membersCount)
@@ -35,7 +37,7 @@ namespace Core
                 return _membersCount.Keys.First();
             }
         }
-        private static Dictionary<int, List<int>> _membersCount = new Dictionary<int, List<int>>();
+        private static Dictionary<int, List<Transform>> _membersCount = new Dictionary<int, List<Transform>>();
 
         public void SetFaction(int factionId)
         {
@@ -60,11 +62,11 @@ namespace Core
             {
                 if (!_membersCount.ContainsKey(_factionId))
                 {
-                    _membersCount.Add(_factionId, new List<int>());
+                    _membersCount.Add(_factionId, new List<Transform>());
                 }
-                if (!_membersCount[_factionId].Contains(GetInstanceID()))
+                if (!_membersCount[_factionId].Contains(transform))
                 {
-                    _membersCount[_factionId].Add(GetInstanceID());
+                    _membersCount[_factionId].Add(transform);
                 }
             }
         }
@@ -78,9 +80,9 @@ namespace Core
             lock (_membersCount)
             {
      
-                if (_membersCount[_factionId].Contains(GetInstanceID()))
+                if (_membersCount[_factionId].Contains(transform))
                 {
-                    _membersCount[_factionId].Remove(GetInstanceID());
+                    _membersCount[_factionId].Remove(transform);
                 }
                 if (_membersCount[_factionId].Count == 0)
                 {
