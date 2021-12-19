@@ -13,6 +13,7 @@ public class ScriptableObjectsInstaller : ScriptableObjectInstaller<ScriptableOb
     [SerializeField] private SelectableValue _selectables;
     [SerializeField] private Sprite _chomperSprite;
     [SerializeField] private Sprite _chomperModSprite;
+    [SerializeField] private Sprite _spitteSprite;
     public override void InstallBindings()
     {
         Container.BindInstances(_assetsContext, _groundClicks, _attackable, _selectables);
@@ -26,7 +27,8 @@ public class ScriptableObjectsInstaller : ScriptableObjectInstaller<ScriptableOb
 
 
         Container.Bind<Sprite>().WithId("Chomper").FromInstance(_chomperSprite);
-        Container.Bind<Sprite>().WithId("Chomper Mod").FromInstance(_chomperSprite);
+        Container.Bind<Sprite>().WithId("Chomper Mod").FromInstance(_chomperModSprite);
+        Container.Bind<Sprite>().WithId("Spitter").FromInstance(_spitteSprite);
     }
 
 }

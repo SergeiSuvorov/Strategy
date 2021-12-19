@@ -1,10 +1,11 @@
 ﻿using Abstractions;
 using UnityEngine;
 using Tools;
+using System;
 
 namespace Core
 {
-    public class MoneyFactory : MonoBehaviour, ISelectable, IAttackable
+    public class MoneyFactory : MonoBehaviour, ISelectable, IAttackable, IGenerateMoney
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
@@ -23,11 +24,11 @@ namespace Core
 
         private float _factoryTime = 5f;
         private float _curentTime = 5f;
-        private int _factoryId;
+        private FactionMember _factoryId;
 
         private void Start()
         {
-            _factoryId= GetComponent<FactionMember>().FactionId;
+            _factoryId= GetComponent<FactionMember>();
         }
         private void Update()
         {
@@ -38,7 +39,7 @@ namespace Core
             else
             {
                 _curentTime = _factoryTime;
-                EconomicModule.ChangeMoneyCount(_factoryId,100);
+                EconomicModule.ChangeMoneyCount(_factoryId.FactionId, 100);
             }
         }
         public void OnSelected()

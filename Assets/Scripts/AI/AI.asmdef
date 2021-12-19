@@ -1,0 +1,15 @@
+{
+    "name": "AI",
+    "references": [
+        "GUID:c99fbfd7ae2dc284b96f493883a9a4c5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

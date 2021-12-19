@@ -33,6 +33,8 @@ namespace UserControlSystem
                     return new ProduceUnitCommand();
                 case UnitType.ChomperMod:
                     return new ProduceUnitModCommand();
+                case UnitType.Spitter:
+                    return new ProduceSpitterCommand();
                 default:
                     return new ProduceUnitCommand();
             }

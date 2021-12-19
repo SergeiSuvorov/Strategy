@@ -5,5 +5,5 @@ using UnityEngine;
 
 public interface IGenerateMoney 
 {
-   event Action<int> GenerateMoney;
+
 }
