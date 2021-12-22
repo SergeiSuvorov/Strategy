@@ -12,25 +12,30 @@ using Zenject;
 
 namespace Core.CommandExecutors
 {
-    public class СonquerCommandExecutor : CommandExecutorBase<IAttackCommand>
+    public class СonquerCommandExecutor : CommandExecutorBase<IConquerCommand>
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private StopCommandExecutor _stopCommandExecutor;
 
+        [Inject] private NavMeshAgent _agent;
         [Inject] private IHealthHolder _ourHealth;
         [Inject(Id = "AttackDistance")] private float _attackingDistance;
         [Inject(Id = "AttackPeriod")] private int _attackingPeriod;
         [Inject(Id = "СonquerPeriod")] private int _сonquerPeriod;
 
 
+
         private Vector3 _ourPosition;
         private Vector3 _targetPosition;
         private Quaternion _ourRotation;
 
+        private int _attackHash = Animator.StringToHash("Attack");
+        private int _walkHash = Animator.StringToHash("Walk");
+        private int _idleHash = Animator.StringToHash("Idle");
+
         private readonly Subject<Vector3> _targetPositions = new Subject<Vector3>();
         private readonly Subject<Quaternion> _targetRotations = new Subject<Quaternion>();
-        private readonly Subject<IAttackable> _attackTargets = new Subject<IAttackable>();
-        private readonly Subject<IAttackable> _conquerTargets = new Subject<IAttackable>();
+        private readonly Subject<IConquerable> _conquerTargets = new Subject<IConquerable>();
 
 
         private Transform _targetTransform;
@@ -50,64 +55,53 @@ namespace Core.CommandExecutors
                 .ObserveOnMainThread()
                 .Subscribe(StartMovingToPosition);
 
-            _attackTargets
-                .ObserveOnMainThread()
-                .Subscribe(StartAttackingTargets);
-
             _targetRotations
                 .ObserveOnMainThread()
-                .Subscribe(SetAttackRotation);
-
-            Debug.Log("СonquerCommandExecutor Init");
+                .Subscribe(SetСonquerRotation);
         }
 
-        private void SetAttackRotation(Quaternion targetRotation)
+        private void SetСonquerRotation(Quaternion targetRotation)
         {
             transform.rotation = targetRotation;
         }
-        private void StartСonquerTargets(IAttackable target)
+        private void StartСonquerTargets(IConquerable target)
         {
-            GetComponent<NavMeshAgent>().isStopped = true;
-            GetComponent<NavMeshAgent>().ResetPath();
-            _animator.SetTrigger(Animator.StringToHash("Attack"));
+            _agent.isStopped = true;
+            _agent.ResetPath();
+            _animator.SetTrigger(_attackHash);
 
             var targetFactionMember = (target as Component).GetComponent<FactionMember>();
             var factionMember = GetComponent<FactionMember>();
 
             targetFactionMember.SetFaction(factionMember.FactionId);
+
             _currentAttackOp.Cancel();
             Destroy(gameObject);
         }
 
-        public override async Task ExecuteSpecificCommand(IAttackCommand command)
+        public override async Task ExecuteSpecificCommand(IConquerCommand command)
         {
-            //if (command.AttackTarget is IGenerateMoney)
-            //{
-            //    Debug.Log("Get Сonquer Target");
-            //    await ExecuteСonquerCommand(command);
-            //}
-            //else
-                await ExecuteAttackCommand(command);
+            await ExecuteAttackCommand(command);
         }
 
         private void StartAttackingTargets(IAttackable target)
         {
-            GetComponent<NavMeshAgent>().isStopped = true;
-            GetComponent<NavMeshAgent>().ResetPath();
-            _animator.SetTrigger(Animator.StringToHash("Attack"));
+            _agent.isStopped = true;
+            _agent.ResetPath();
+            _animator.SetTrigger(_attackHash);
             target.ReceiveDamage(GetComponent<IDamageDealer>().Damage);
         }
 
         private void StartMovingToPosition(Vector3 position)
         {
-            GetComponent<NavMeshAgent>().destination = position;
-            _animator.SetTrigger(Animator.StringToHash("Walk"));
+            _agent.destination = position;
+            _animator.SetTrigger(_walkHash);
         }
 
-        public async Task ExecuteAttackCommand(IAttackCommand command)
+        public async Task ExecuteAttackCommand(IConquerCommand command)
         {
-            _targetTransform = (command.AttackTarget as Component).transform;
-            _currentAttackOp = new AttackOperation(this, command.AttackTarget);
+            _targetTransform = (command.СonquerTarget as Component).transform;
+            _currentAttackOp = new AttackOperation(this, command.СonquerTarget);
             Update();
             _stopCommandExecutor.CancellationToken = new CancellationTokenSource();
             try
@@ -118,7 +112,7 @@ namespace Core.CommandExecutors
             {
                 _currentAttackOp.Cancel();
             }
-            _animator.SetTrigger("Idle");
+            _animator.SetTrigger(_idleHash);
             _currentAttackOp = null;
             _targetTransform = null;
             _stopCommandExecutor.CancellationToken = null;
@@ -167,22 +161,16 @@ namespace Core.CommandExecutors
             private event Action OnComplete;
 
             private readonly СonquerCommandExecutor _attackCommandExecutor;
-            private readonly IAttackable _target;
+            private readonly IConquerable _target;
             private readonly FactionMember _targetFactionMember;
             private readonly FactionMember _factionMember;
 
             private bool _isCancelled;
-            private bool _isСonquer;
-            public AttackOperation(СonquerCommandExecutor attackCommandExecutor, IAttackable target)
+            public AttackOperation(СonquerCommandExecutor attackCommandExecutor, IConquerable target)
             {
                 _factionMember = (attackCommandExecutor as Component).GetComponent<FactionMember>();
                 _targetFactionMember = (target as Component).GetComponent<FactionMember>();
-                _isСonquer = target is IGenerateMoney;
-
-                if (_isСonquer)
-                {
-                    Debug.Log("is money generate " + _isСonquer);
-                }
+               
                 _target = target;
 
 
@@ -241,12 +229,7 @@ namespace Core.CommandExecutors
                     }
                     else
                     {
-                        if(_isСonquer)
-                        {
-                            _attackCommandExecutor._conquerTargets.OnNext(_target);
-                        }
-                        else
-                            _attackCommandExecutor._attackTargets.OnNext(_target);
+                        _attackCommandExecutor._conquerTargets.OnNext(_target);
                         Thread.Sleep(_attackCommandExecutor._attackingPeriod);
                     }
                 }

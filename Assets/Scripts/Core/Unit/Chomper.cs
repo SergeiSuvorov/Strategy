@@ -48,7 +48,7 @@ namespace Core
 
         private async void Destroy()
         {
-            await _stopCommand.ExecuteSpecificCommand(new StopCommand());
+            _stopCommand.ExecuteSpecificCommand(new StopCommand());
             OnDeselected();
             Destroy(gameObject);
         }

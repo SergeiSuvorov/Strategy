@@ -5,7 +5,7 @@ using System;
 
 namespace Core
 {
-    public class MoneyFactory : MonoBehaviour, ISelectable, IAttackable, IGenerateMoney
+    public class MoneyFactory : MonoBehaviour, ISelectable, IConquerable, IGenerateMoney
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
@@ -14,7 +14,7 @@ namespace Core
 
         public Transform PivotPoint => _pivotPoint;
 
-        [SerializeField] private float _maxHealth = 1000;
+        [SerializeField] private float _maxHealth = 700;
         [SerializeField] private int createPrefabDelayTime = 5000;
         [SerializeField] private Sprite _icon;
         [SerializeField] private Outline _selectedOutline;

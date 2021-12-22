@@ -1,11 +1,12 @@
 ﻿using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Core
 {
     public class AutoAttackAgent : MonoBehaviour
     {
-        [SerializeField] private ChomperCommandsQueue _queue;
+      [Inject] private ICommandsQueue _queue;
 
         private void Start()
         {

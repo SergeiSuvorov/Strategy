@@ -30,6 +30,15 @@ namespace Core
                 return new List<int>(_membersCount.Keys);
             }
         }
+
+        public static IReadOnlyReactiveCollection<Transform> GetMemberFactionList(int fractionId)
+        {
+            lock (_membersCount)
+            {
+                return _membersCount[fractionId];
+            }
+        }
+
         public static int GetWinner()
         {
             lock (_membersCount)
@@ -37,11 +46,14 @@ namespace Core
                 return _membersCount.Keys.First();
             }
         }
-        private static Dictionary<int, List<Transform>> _membersCount = new Dictionary<int, List<Transform>>();
+        private static ReactiveDictionary<int, ReactiveCollection<Transform>> _membersCount = new ReactiveDictionary<int, ReactiveCollection<Transform>>();
 
+        public static IReadOnlyReactiveDictionary<int, ReactiveCollection<Transform>> MembersCount => _membersCount;
         public void SetFaction(int factionId)
         {
+            Unregister();
             _factionId = factionId;
+            Register();
         }
 
         private void Awake()
@@ -62,7 +74,7 @@ namespace Core
             {
                 if (!_membersCount.ContainsKey(_factionId))
                 {
-                    _membersCount.Add(_factionId, new List<Transform>());
+                    _membersCount.Add(_factionId, new ReactiveCollection<Transform>());
                 }
                 if (!_membersCount[_factionId].Contains(transform))
                 {
@@ -79,7 +91,6 @@ namespace Core
             }
             lock (_membersCount)
             {
-     
                 if (_membersCount[_factionId].Contains(transform))
                 {
                     _membersCount[_factionId].Remove(transform);

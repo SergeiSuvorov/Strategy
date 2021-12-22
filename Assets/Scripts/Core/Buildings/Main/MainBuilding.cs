@@ -27,6 +27,11 @@ namespace Core
         [SerializeField] private Transform _pivotPoint;
         [SerializeField] private UnitType _unitType;
        private float _health = 1000;
+
+        private void Awake()
+        {
+            RendezvousPoint = _pivotPoint.position;
+        }
         public void OnSelected()
         {
             _selectedOutline.enabled = true;

@@ -20,15 +20,17 @@ namespace UserControlSystem
         [Inject] private CommandCreatorBase<IPatrolCommand> _patroller;
         [Inject] private CommandCreatorBase<IStopCommand> _stoper;
         [Inject] private CommandCreatorBase<ISetRendezvousPointCommand> _rendevouser;
+        [Inject] private CommandCreatorBase<IConquerCommand> _conquaer;
 
-        private ICommandsQueue _queue;
+        private ICommandsQueue _commandsQueue;
 
         private bool _commandIsPending;
 
         [Inject] private Vector3Value _groundClicksRMB;
         [Inject] private AttackableValue _attackClicksRMB;
+        [Inject] private СonquerableValue _сonquerableClicksRMB;
 
-        public void OnCommandButtonClicked(ICommandExecutor commandExecutor, ICommandsQueue commandsQueue)
+        public void OnCommandButtonClicked(ICommandExecutor commandExecutor)
         {
             UnsubscribeFromValueChange();
             if (_commandIsPending)
@@ -38,12 +40,13 @@ namespace UserControlSystem
             _commandIsPending = true;
             OnCommandAccepted?.Invoke(commandExecutor);
 
-            _unitProducer.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
-            _attacker.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
-            _stoper.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
-            _mover.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
-            _patroller.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
-            _rendevouser.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, commandsQueue));
+            _unitProducer.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _attacker.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _stoper.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _mover.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _patroller.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _rendevouser.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
+            _conquaer.ProcessCommandExecutor(commandExecutor, command => ExecuteCommandWrapper(command, _commandsQueue));
         }
 
 
@@ -60,23 +63,22 @@ namespace UserControlSystem
             SubscribeFromValueChange();
         }
 
-        public void OnSelectionChanged()
-        {
-            _commandIsPending = false;
-            ProcessOnCancel();
-        }
-
-
         private void OnGroundClicksRMB(Vector3 argument)
         {
             Debug.Log("Нажата правая кнопка мыши - движение");
-            ExecuteCommandWrapper(new MoveCommand(argument), _queue);
+            ExecuteCommandWrapper(new MoveCommand(argument), _commandsQueue);
         }
 
         private void OnAttackClicksRMB(IAttackable argument)
         {
             Debug.Log("Нажата правая кнопка мыши - атака");
-            ExecuteCommandWrapper(new AttackCommand(argument), _queue);
+            ExecuteCommandWrapper(new AttackCommand(argument), _commandsQueue);
+        }
+
+        private void OnConquerClicksRMB(IConquerable argument)
+        {
+            Debug.Log("Нажата правая кнопка мыши - захват");
+            ExecuteCommandWrapper(new ConquerCommand(argument), _commandsQueue);
         }
 
         public void OnSelectionChanged(ICommandsQueue queue)
@@ -84,7 +86,7 @@ namespace UserControlSystem
             UnsubscribeFromValueChange();
             _commandIsPending = false;
 
-            _queue = queue;
+            _commandsQueue = queue;
             ProcessOnCancel();
             SubscribeFromValueChange();
         }
@@ -93,12 +95,14 @@ namespace UserControlSystem
         {
             _groundClicksRMB.OnNewValue -= OnGroundClicksRMB;
             _attackClicksRMB.OnNewValue -= OnAttackClicksRMB;
+            _сonquerableClicksRMB.OnNewValue -= OnConquerClicksRMB; 
         }
 
         private void SubscribeFromValueChange()
         {
             _groundClicksRMB.OnNewValue += OnGroundClicksRMB;
             _attackClicksRMB.OnNewValue += OnAttackClicksRMB;
+            _сonquerableClicksRMB.OnNewValue += OnConquerClicksRMB;
         }
         private void ProcessOnCancel()
         {

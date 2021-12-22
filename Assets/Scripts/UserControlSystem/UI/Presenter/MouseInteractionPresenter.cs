@@ -11,6 +11,7 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
     [SerializeField] private Camera _camera;
     [Inject] private SelectableValue _selectedObject;
     [Inject] private AttackableValue _attackObject;
+    [Inject] private СonquerableValue _conquerableObject; 
     [SerializeField] private EventSystem _eventSystem;
 
     [Inject] private Vector3Value _groundClicksRMB;
@@ -55,6 +56,11 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
             {
                 _attackObject.SetValue(attackable);
             }
+            if (GetHitResult<IConquerable> (hits, out var conquerable))
+            {
+                Debug.Log("Is conquerable");
+                _conquerableObject.SetValue(conquerable);
+            }
             else if (_groundPlane.Raycast(ray, out var enter))
             {
                 _groundClicksRMB.SetValue(ray.origin + ray.direction * enter);
@@ -63,50 +69,7 @@ public sealed class MouseInteractionPresenter : MonoBehaviour
 
     }
 
-
-    private void Initialized()
-    {
-
-        var notUiClickStreem = Observable.EveryUpdate()
-            .Where(_ => !_eventSystem.IsPointerOverGameObject());
-
-        var ClickStreem = notUiClickStreem.Where(_ => (Input.GetMouseButton(0) || Input.GetMouseButton(1)));
-
-        var ClickRay = ClickStreem
-            .Select(_ => _camera.ScreenPointToRay(Input.mousePosition));
-
-        var ClickRayHits = ClickRay
-            .Select(ray => (ray, Physics.RaycastAll(ray)));
-
-        ClickRayHits.Subscribe(data =>
-        {
-            var (ray, hits) = data;
-
-            var clickObject = hits
-            .Select(hit => hit.collider.GetComponentInParent<ISelectable>())
-            .Where(c => c != null)
-            .FirstOrDefault();
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                _selectedObject.SetValue(clickObject);
-            }
-            else
-            {
-                var attackObject = clickObject as IAttackable;
-                if (attackObject != null)
-                {
-                    Debug.Log("Attack");
-                    _attackObject.SetValue(attackObject);
-                }
-                else if (_groundPlane.Raycast(ray, out var enter))
-                {
-                    _groundClicksRMB.SetValue(ray.origin + ray.direction * enter);
-                }
-            }
-        });
-    }
-
+    
     private bool GetHitResult<T>(RaycastHit[] hits, out T result) where T : class
     {
         result = default;

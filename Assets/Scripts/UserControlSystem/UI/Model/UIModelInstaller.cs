@@ -29,6 +29,8 @@ namespace UserControlSystem
              .To<StopCommandCommandCreator>().AsTransient();
             Container.Bind<CommandCreatorBase<ISetRendezvousPointCommand>>()
              .To<SetRendezvousPointCommandCreator>().AsTransient();
+            Container.Bind<CommandCreatorBase<IConquerCommand>>()
+             .To<ConquerCommandCommandCreator>().AsTransient();
 
             Container.Bind<float>().WithId("Chomper").FromInstance(5f);
             Container.Bind<string>().WithId("Chomper").FromInstance("Chomper");
@@ -40,7 +42,7 @@ namespace UserControlSystem
 
             Container.Bind<float>().WithId("Spitter").FromInstance(5f);
             Container.Bind<string>().WithId("Spitter").FromInstance("Spitter");
-            Container.Bind<int>().WithId("Spitter").FromInstance(400);
+            Container.Bind<int>().WithId("Spitter").FromInstance(300);
 
 
 

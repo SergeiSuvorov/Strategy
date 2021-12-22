@@ -11,12 +11,13 @@ public class ScriptableObjectsInstaller : ScriptableObjectInstaller<ScriptableOb
     [SerializeField] private Vector3Value _groundClicks;
     [SerializeField] private AttackableValue _attackable;
     [SerializeField] private SelectableValue _selectables;
+    [SerializeField] private ÑonquerableValue _conquerables;
     [SerializeField] private Sprite _chomperSprite;
     [SerializeField] private Sprite _chomperModSprite;
     [SerializeField] private Sprite _spitteSprite;
     public override void InstallBindings()
     {
-        Container.BindInstances(_assetsContext, _groundClicks, _attackable, _selectables);
+        Container.BindInstances(_assetsContext, _groundClicks, _attackable, _selectables, _conquerables);
 
         Container.Bind<IAwaitable<IAttackable>>()
             .FromInstance(_attackable);
@@ -24,6 +25,8 @@ public class ScriptableObjectsInstaller : ScriptableObjectInstaller<ScriptableOb
              .FromInstance(_groundClicks);
         Container.Bind<IAwaitable<ISelectable>>()
             .FromInstance(_selectables);
+        Container.Bind<IAwaitable<IConquerable>>()
+            .FromInstance(_conquerables);
 
 
         Container.Bind<Sprite>().WithId("Chomper").FromInstance(_chomperSprite);
