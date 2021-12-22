@@ -22,8 +22,6 @@ public class AIRegister : MonoBehaviour
     public static IReadOnlyReactiveDictionary<int, ReactiveCollection<Transform>> BuildingDictionary => _buildingDictionary;
     public static IReadOnlyReactiveDictionary<int, ReactiveCollection<Transform>> UnitDictionary => _unitDictionary;
 
-    //[Inject] private AIUnitProduce _aiUnitProduce;
-
     private void Awake()
     {
         var factionList = FactionMember.GetFactionList();
