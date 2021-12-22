@@ -1,6 +1,7 @@
 ﻿using Abstractions;
 using Core;
 using UnityEngine;
+using UnityEngine.AI;
 using Zenject;
 
 namespace Assets.Scripts.Abstractions
@@ -20,6 +21,7 @@ namespace Assets.Scripts.Abstractions
             Container.Bind<float>().WithId("AttackDistance").FromInstance(_attackDistance);
             Container.Bind<int>().WithId("СonquerPeriod").FromInstance(_conquerPeriod);
             Container.Bind<int>().WithId("AttackPeriod").FromInstance(_attackPeriod);
+            Container.Bind<int>().WithId("Damage").FromInstance(GetComponent<IDamageDealer>().Damage);
 
             Container.Bind<IAutomaticAttacker>().FromComponentInChildren();
             Container
@@ -30,6 +32,10 @@ namespace Assets.Scripts.Abstractions
                 .FromInstance(_factionMemberParallelInfoUpdater);
             Container.Bind<IFactionMember>().FromComponentInChildren();
             Container.Bind<ICommandsQueue>().FromComponentInChildren();
+            Container.Bind<NavMeshAgent>().FromComponentInChildren();
+
+
+            
         }
     }
 }

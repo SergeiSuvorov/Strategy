@@ -40,7 +40,6 @@ namespace Core.CommandExecutors
             if (innerTask.TimeLeft <= 0)
             {
                 RemoveTaskAtIndex(0);
-
                 var unit = _diContainer.InstantiatePrefab(innerTask.UnitPrefab, transform.position, Quaternion.identity, _unitsParent);
                 var unitMover = unit.GetComponent<CommandExecutorBase<IMoveCommand>>();
                 var factionMember = unit.GetComponent<FactionMember>();
@@ -62,7 +61,6 @@ namespace Core.CommandExecutors
 
         public override async Task ExecuteSpecificCommand(IProduceUnitCommand command)
         {
-
             if (EconomicModule.GetFactionMoneyCount(_factionId) < command.ProductionCost)
                 Debug.Log("Не хватает денег");
             else if (_queue.Count >= _maximumUnitsInQueue)

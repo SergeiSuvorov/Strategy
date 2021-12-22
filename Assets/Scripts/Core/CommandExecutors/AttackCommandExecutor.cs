@@ -14,26 +14,32 @@ namespace Core.CommandExecutors
 {
     public class AttackCommandExecutor : CommandExecutorBase<IAttackCommand>
     {
-        [SerializeField] protected Animator _animator;
-        [SerializeField] protected StopCommandExecutor _stopCommandExecutor;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private StopCommandExecutor _stopCommandExecutor;
 
-        [Inject] protected IHealthHolder _ourHealth;
-        [Inject(Id = "AttackDistance")] protected float _attackingDistance;
-        [Inject(Id = "AttackPeriod")] protected int _attackingPeriod;
+        [Inject] private NavMeshAgent _agent;
+        [Inject] private IHealthHolder _ourHealth;
+        [Inject(Id = "AttackDistance")] private float _attackingDistance;
+        [Inject(Id = "AttackPeriod")] private int _attackingPeriod;
+        [Inject(Id = "Damage")] private int _damage;
 
-        protected Vector3 _ourPosition;
-        protected Vector3 _targetPosition;
-        protected Quaternion _ourRotation;
+        private Vector3 _ourPosition;
+        private Vector3 _targetPosition;
+        private Quaternion _ourRotation;
 
-        protected readonly Subject<Vector3> _targetPositions = new Subject<Vector3>();
-        protected readonly Subject<Quaternion> _targetRotations = new Subject<Quaternion>();
+        private int _attackHash = Animator.StringToHash("Attack");
+        private int _walkHash = Animator.StringToHash("Walk");
+        private int _idleHash = Animator.StringToHash("Idle");
+
+        private readonly Subject<Vector3> _targetPositions = new Subject<Vector3>();
+        private readonly Subject<Quaternion> _targetRotations = new Subject<Quaternion>();
         private readonly Subject<IAttackable> _attackTargets = new Subject<IAttackable>();
 
-        protected Transform _targetTransform;
+        private Transform _targetTransform;
         private AttackOperation _currentAttackOp;
         
         [Inject]
-        protected void Init()
+        private void Init()
         {
             _targetPositions
                 .Select(value => new Vector3((float)Math.Round(value.x, 2), (float)Math.Round(value.y, 2), (float)Math.Round(value.z, 2)))
@@ -48,27 +54,26 @@ namespace Core.CommandExecutors
             _targetRotations
                 .ObserveOnMainThread()
                 .Subscribe(SetAttackRotation);
-
-            Debug.Log("AttackCommandExecutor Init");
         }
         
         private void SetAttackRotation(Quaternion targetRotation)
         {
+            if(transform!= null)
             transform.rotation = targetRotation;
         }
 
         private void StartAttackingTargets(IAttackable target)
         {
-            GetComponent<NavMeshAgent>().isStopped = true;
-            GetComponent<NavMeshAgent>().ResetPath();
-            _animator.SetTrigger(Animator.StringToHash("Attack"));
-            target.ReceiveDamage(GetComponent<IDamageDealer>().Damage);
+            _agent.isStopped = true;
+            _agent.ResetPath();
+            _animator.SetTrigger(_attackHash);
+            target.ReceiveDamage(_damage);
         }
 
         private void StartMovingToPosition(Vector3 position)
         {
-            GetComponent<NavMeshAgent>().destination = position;
-            _animator.SetTrigger(Animator.StringToHash("Walk"));
+            _agent.destination = position;
+            _animator.SetTrigger(_walkHash);
         }
         
         public override async Task ExecuteSpecificCommand(IAttackCommand command)
@@ -85,13 +90,14 @@ namespace Core.CommandExecutors
             {
                 _currentAttackOp.Cancel();
             }
-            _animator.SetTrigger("Idle");
+            if(_animator!=null)
+            _animator.SetTrigger(_idleHash);
             _currentAttackOp = null;
             _targetTransform = null;
             _stopCommandExecutor.CancellationToken = null;
         }
-        
-        protected void Update()
+
+        private void Update()
         {
             if (_currentAttackOp == null)
             {
